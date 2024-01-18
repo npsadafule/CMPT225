@@ -47,9 +47,15 @@ class Deque
           theCapacity = newCapacity;
         }
     }
-
+    //Array like access
+    Object & operator[](int index){ 
+        return objects[(front + index) % theCapacity]; 
+    }
+    const Object & operator[](int index) const{ 
+        return objects[(front + index) % theCapacity]; 
+    }
+    
     // Operations
-
     void enqueue( const Object & x )// Insert a new object at the back
     {
         if( theSize == theCapacity ) reserve( 2 * theCapacity + 1 );
