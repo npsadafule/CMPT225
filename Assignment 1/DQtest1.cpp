@@ -1,80 +1,78 @@
-#include "Deque.h"
 #include <iostream>
+#include "Deque.h"
+
 using namespace std;
 
 int main() {
-    // Test 1: Creates an empty deque and displays it
+    // Creating a Deque
+    Deque<int> dq;
+
+    cout<<"Test 1: Enqueue and dequeue a few elements "<<endl;
+    dq.enqueue(1);
+    dq.enqueue(2);
+    dq.enqueue(3);
+    dq.display();  // Expected output: Size = 3 < 0=1 , 1=2 , 2=3 , >
+    cout<<"\n";
+
+    int frontElement = dq.dequeue();
+    cout << "Front element: " << frontElement <<endl;  // Expected output: Front element: 1
+    dq.display();  // Expected output: Size = 2 < 0=2 , 1=3 , >
+    cout<<"\n"<<"\n";
+
+    cout<<"Test 2: Test jump and eject" <<endl;
+    dq.jump(0);
+    dq.display();  // Expected output: Size = 3 < 0=0 , 1=2 , 2=3 , >
+    cout<<"\n";
+
+    int backElement = dq.eject();
+    cout << "Back element: " << backElement <<endl;  // Expected output: Back element: 3
+    dq.display();  // Expected output: Size = 2 < 0=0 , 1=2 , >
+    cout<<"\n"<<"\n";
+
+    cout<<"Test 3: Test wrap-around" <<endl;
+    for (int i = 4; i <= 10; ++i) {
+        dq.enqueue(i);
+    }
+    dq.display();  // Expected output: Size = 9 < 0=0 , 1=2 , 2=4 , 3=5 , 4=6 , 5=7 , 6=8 , 7=9 , 8=10 , >
+    cout<<"\n"<<"\n";
+
+    cout<<"Test 4: Test reserve" <<endl;
+    dq.reserve(15);
+    dq.display();  // Expected output: Size = 9 < 0=0 , 1=2 , 2=4 , 3=5 , 4=6 , 5=7 , 6=8 , 7=9 , 8=10 , >
+    cout<<"\n"<<"\n";
+
+    cout<<"Test 5: Long sequence of operations"<<endl;
+    for (int i = 11; i <= 20; ++i) {
+        dq.jump(i);
+    }
+    dq.display();  // Expected output: Size = 19 < 0=20 , 1=19 , 2=18 , 3=17 , 4=16 , 5=15 , 6=14 , 7=13 , 8=12 , 9=11 , 10=0 , 11=2 , 12=4 , 13=5 , 14=6 , 15=7 , 16=8 , 17=9 , 18-10 , >
+    cout<<"\n"<<"\n";
+
+    cout<<"Some additional Edge Cases" <<endl;
+
+    cout<<"Case 1: Empty Deque" <<endl;
     Deque<int> dq1;
-    cout << "Test 1: Empty Deque \n";
-    dq1.display(); // Expected output: (empty line)
-    cout << "\n";
+    cout << "Is dq1 empty? " << (dq1.empty() ? "Yes" : "No") <<endl;  // Expected output: Yes
+    cout<<"\n";
 
-    // Test 2: Enqueue elements to the back
-    dq1.enqueue(1);
-    dq1.enqueue(2);
-    dq1.enqueue(3);
-    cout << "Test 2: Enqueue to Back \n";
-    dq1.display(); // Expected output: 1 2 3
-    cout << "\n";
+    cout<<"Case 2: Edge Case with Reserve" <<endl;
+    dq.reserve(5);  // Trying to reserve with a new capacity less than the current size
+    dq.display();  // Expected output: Size = 19 < 0=20 , 1=19 , 2=18 , 3=17 , 4=16 , 5=15 , 6=14 , 7=13 , 8=12 , 9=11 , 10=0 , 11=2 , 12=4 , 13=5 , 14=6 , 15=7 , 16=8 , 17=9 , 18-10 , >
+    cout<<"\n"<<"\n";
 
-    // Test 3: Dequeue from the front
-    int frontElement = dq1.dequeue();
-    cout << "Test 3: Dequeue from Front \n";
-    cout << "Front element: " << frontElement << "\n"; // Expected output 1
-    dq1.display(); // Expected output: 2 3
-    cout << "\n";
+    cout<<"Case 3: Edge Case with Jump" <<endl;
+    Deque<int> dq2;
+    dq2.jump(5);  // Trying to jump when the deque is empty
+    dq2.display();  // Expected output: Size = 1 < 0=5 , >
+    cout<<"\n"<<"\n";
 
-    // Test 4: Jump to the front
-    dq1.jump(7);
-    cout << "Test 4: Jump to Front \n";
-    dq1.display(); // Expected output: 7 2 3
-    cout << "\n";
-
-    // Test 5: Eject from the back
-    int backElement = dq1.eject();
-    cout << "Test 5: Eject from Back \n";
-    cout << "Back element: " << backElement << "\n"; // Expected output 3
-    dq1.display(); // Expected output: 7 2
-    cout << "\n";
-
-    // Test 6: Clear the deque
-    dq1.clear();
-    cout << "Test 6: Clear Deque \n";
-    dq1.display(); // Expected output: empty line
-    cout << "\n";
-
-    // Test 7: Enqueue more elements to test reserve
-    for (int i = 1; i <= 10; ++i) {
-        dq1.enqueue(i);
-    }
-    cout << "Test 7: Enqueue to prompt Reserve \n";
-    dq1.display(); // Displays resized deque
-    cout << "\n";
-
-    // Test 8: Array-like access
-    cout << "Test 8: Array-Like Access\n";
-    for (int i = 0; i < dq1.size(); ++i) {
-        cout << dq1[i] << " ";
-    }
-    cout << "\n";
-
-    // Test 9: Test reserve with smaller capacity
-    dq1.reserve(5);
-    cout << "Test 9: Reserve with Smaller Capacity \n";
-    dq1.display(); // Displays deque with resized capacity
-    cout << "\n";
-
-    // Test 10: Test reserve with same capacity
-    dq1.reserve(8);
-    cout << "Test 10: Reserve with Same Capacity \n";
-    dq1.display(); // Displays deque with same capacity
-    cout << "\n";
-
-    // Test 11: Test reserve with larger capacity
-    dq1.reserve(15);
-    cout << "Test 11: Reserve with Larger Capacity \n";
-    dq1.display(); // Displays deque with larger capacity
-    cout << "\n";
+    cout<<"Case 4: Edge Case with Enqueue and Dequeue" <<endl;
+    Deque<int> dq3;
+    dq3.enqueue(10);
+    int dqElement = dq3.dequeue();
+    cout << "Dequeued element: " << dqElement <<endl;  // Expected output: Dequeued element: 10
+    dq3.display();  // Expected output: Size = 0 < >
+    cout<<"\n"<<"\n";
 
     return 0;
 }
