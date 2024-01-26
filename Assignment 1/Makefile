@@ -5,14 +5,14 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++11
 
 # Source files
-SRCS = DQarraytest.cpp DQtest.cpp DQtest1.cpp
+SRCS = DQarraytest.cpp DQtest.cpp
 DEQUE_HEADER = Deque.h
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
 
 # Executables
-TARGETS = DQarraytest DQtest DQtest1
+TARGETS = DQarraytest DQtest 
 
 # Main target
 all: $(TARGETS)
