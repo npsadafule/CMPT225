@@ -14,9 +14,9 @@ public:
         front = new Node(T(), nullptr, nullptr);
         back = new Node(T(), front, nullptr);
         front->next = back;
-
         size = 0;
     }
+
     ~OSLL() {
         Node *cursor = front;
         while (cursor != nullptr) {
@@ -25,6 +25,7 @@ public:
             delete current;
         }
     }
+    
     bool isEmpty() { return size == 0; }
     int get_size() { return size; }
 
@@ -83,12 +84,19 @@ public:
 
     T getMin() {
         // returns the minimum item in the list
-        // requires: size > 0
+        // requires: size > 0 
+        if (size <= 0) {
+            cout << "List is empty. No Min element" << endl;
+        }
         return front->next->data;
     }
+
     T getMax() {
-        // returns the maximum item in the list
+        // returns the maximum item in the list 
         // requires: size > 0
+        if (size <= 0) {
+            cout << "List is empty. No Max element" << endl;
+        }
         return back->prev->data;
     }
 
