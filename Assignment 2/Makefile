@@ -1,10 +1,10 @@
-all: Test 
+all: TestOSLL
 
-Test: Test.o
-	g++ -Wall -o Test Test.o  
+TestOSLL: TestOSLL.o
+	g++ -Wall -o TestOSLL TestOSLL.o  
 
-Test.o: Test.cpp OSLL.h 
-	g++ -Wall -o Test.o -c TesT.cpp 
+TestOSLL.o: testOSLL.cpp OSLL.h 
+	g++ -Wall -o TestOSLL.o -c testOSLL.cpp 
 
 clean:
-	rm -f Test  *.o
+	rm -f TestOSLL *.o
