@@ -1,10 +1,29 @@
-all: TestOSLL
+# Compiler
+CXX = g++
 
-TestOSLL: TestOSLL.o
-	g++ -Wall -o TestOSLL TestOSLL.o  
+# Compiler flags
+CXXFLAGS = -Wall -std=c++11
 
-TestOSLL.o: testOSLL.cpp OSLL.h 
-	g++ -Wall -o TestOSLL.o -c testOSLL.cpp 
+# Source files
+SRCS = testOSLL.cpp testOSULL.cpp
 
+# Object files
+OBJS = $(SRCS:.cpp=.o)
+
+# Executables
+TARGETS = testOSLL testOSULL
+
+# Main target
+all: $(TARGETS)
+
+# Rule to build executables
+$(TARGETS): %: %.o
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+# Rule to build object files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Clean target to remove generated files
 clean:
-	rm -f TestOSLL *.o
+	rm -f $(OBJS) $(TARGETS)
