@@ -32,7 +32,6 @@ int main() {
 
     // Measure traversal time for the unrolled linked list
     start = high_resolution_clock::now();
-    // Assuming a method to traverse is implemented. Simulate traversal.
     for (int i = 0; i < num; ++i) {
         unrolledList.find(i);
     }
@@ -42,7 +41,6 @@ int main() {
 
     // Measure traversal time for the doubly-linked list
     start = high_resolution_clock::now();
-    // Assuming a method to traverse is implemented. Simulate traversal.
     for (int i = 0; i < num; ++i) {
         linkedList.find(i);
     }
