@@ -5,13 +5,13 @@ CXX = g++
 CXXFLAGS = -Wall -std=c++11
 
 # Source files
-SRCS = testOSLL.cpp testOSULL.cpp
+SRCS = testOSLL.cpp testOSULL.cpp exp.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
 
 # Executables
-TARGETS = testOSLL testOSULL
+TARGETS = testOSLL testOSULL exp
 
 # Main target
 all: $(TARGETS)
