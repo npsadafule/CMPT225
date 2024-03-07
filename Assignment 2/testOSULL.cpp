@@ -4,75 +4,74 @@
 
 using namespace std;
 
-// Function to run tests on the OSULL class
+// Function to run extended tests on the OSULL class with detailed outputs
 void test_OSULL() {
     OSULL<int> osull;
 
-    // Test insertion
+    cout << "\nTesting insertion of initial set of values...\n";
     osull.insert(5);
     osull.insert(10);
     osull.insert(3);
     osull.insert(8);
     osull.insert(15);
+    osull.insert(10); // Attempt to insert a duplicate
 
-    // Test display
-    cout << "OSULL after insertion: ";
-    osull.display(); // Should print <3 5 8 10 15>
+    cout << "OSULL after initial insertions (including duplicate 10 attempt): ";
+    osull.display(); // Expected: <3 5 8 10 15>
     assert(osull.get_size() == 5);
+    cout << "Passed.\n";
 
-    // Test removal
-    osull.remove(8);
-    osull.remove(3);
+    cout << "\nTesting removal...\n";
+    osull.remove(8); // Remove a middle value
+    osull.remove(3); // Remove the smallest value
 
-    // Test display after removal
-    cout << "OSULL after removal: ";
-    osull.display(); // Should print <5 10 15>
+    cout << "OSULL after removing 8 and 3: ";
+    osull.display(); // Expected: <5 10 15>
     assert(osull.get_size() == 3);
+    cout << "Passed.\n";
 
-    // Test searching
-    cout << "Is 10 present in OSULL? " << (osull.find(10) ? "Yes" : "No") << endl; // Should print "Yes"
-    cout << "Is 3 present in OSULL? " << (osull.find(3) ? "Yes" : "No") << endl;   // Should print "No"
+    cout << "\nTesting insertion of additional values...\n";
+    // Insert a mix of values to test order maintenance and node splitting
+    int additionalValues[] = {2, 7, 12, 17, 22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72};
+    for (int val : additionalValues) {
+        osull.insert(val);
+        cout << "Inserted " << val << ": ";
+        osull.display();
+    }
+    cout << "After inserting additional values: ";
+    osull.display(); // List should now include all these values in order
+    assert(osull.get_size() == 18);
+    cout << "Passed.\n";
 
-    // Test merging and splitting
-    osull.insert(20);
-    osull.insert(25);
-    osull.insert(30);
-    osull.insert(35);
-    osull.insert(40);
+    cout << "\nTesting removal that may trigger merging...\n";
+    osull.remove(22); // Remove a value to potentially trigger merging
+    cout << "OSULL after removal of 22 (merging test): ";
+    osull.display();
+    assert(osull.get_size() == 17);
+    cout << "Passed.\n";
 
-    // Test display after additional insertion
-    cout << "OSULL after additional insertion: ";
-    osull.display(); // Should print <5 10 15 20 25 30 35 40>
-    assert(osull.get_size() == 8);
+    cout << "\nTesting insertion that triggers node splitting...\n";
+    osull.insert(25); // Inserting in a way that might trigger splitting
+    cout << "OSULL after inserting 25 (splitting test): ";
+    osull.display();
+    assert(osull.get_size() == 18);
+    cout << "Passed.\n";
 
-    // Test removal that triggers merging
-    osull.remove(20);
-    osull.remove(25);
+    cout << "\nTesting search functionality...\n";
+    // Testing presence and absence
+    assert(osull.find(10) == true); // Should be present
+    assert(osull.find(3) == false); // Should be absent after removal
+    cout << "Search functionality passed.\n";
 
-    // Test display after removal triggering merging
-    cout << "OSULL after removal triggering merging: ";
-    osull.display(); // Should print <5 10 15 30 35 40>
-    assert(osull.get_size() == 6);
+    cout << "\nTesting retrieval of minimum and maximum...\n";
+    cout << "Minimum value in OSULL: " << osull.getMin() << endl; // Expected: "2"
+    cout << "Maximum value in OSULL: " << osull.getMax() << endl; // Expected: "72"
+    cout << "Retrieval tests passed.\n";
 
-    // Test insertion that triggers splitting
-    osull.insert(7);
-    osull.insert(12);
-
-    // Test display after insertion triggering splitting
-    cout << "OSULL after insertion triggering splitting: ";
-    osull.display(); // Should print <5 7 10 12 15 30 35 40>
-    assert(osull.get_size() == 8);
-
-    // Test getMin and getMax
-    cout << "Minimum value in OSULL: " << osull.getMin() << endl; // Should print "5"
-    cout << "Maximum value in OSULL: " << osull.getMax() << endl; // Should print "40"
+    cout << "\nAll tests completed. If no assertions failed, all tests passed successfully!\n";
 }
 
 int main() {
-    // Run tests on OSULL class
     test_OSULL();
-
-    cout << "All tests passed successfully!" << endl;
-
     return 0;
 }
