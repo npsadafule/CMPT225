@@ -85,18 +85,12 @@ public:
     T getMin() {
         // returns the minimum item in the list
         // requires: size > 0 
-        if (size <= 0) {
-            cout << "List is empty. No Min element" << endl;
-        }
         return front->next->data;
     }
 
     T getMax() {
         // returns the maximum item in the list 
         // requires: size > 0
-        if (size <= 0) {
-            cout << "List is empty. No Max element" << endl;
-        }
         return back->prev->data;
     }
 
