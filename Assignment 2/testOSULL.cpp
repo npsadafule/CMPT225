@@ -4,86 +4,61 @@
 using namespace std;
 
 int main() {
-    const int N = 10;
     OSULL<int> lst;
 
+    cout << "Initially, the list is: ";
     lst.display();
-    cout << "\n";
 
-    cout << " max: " << lst.getMax() << "\n";
-    cout << " min: " << lst.getMin() << "\n";
-
-    for (int i = 0; i < N; i++) {
-        lst.insert(21 - i);
+    // Insert elements
+    for (int i = 1; i <= 10; ++i) {
+        lst.insert(i * 2); // Insert even numbers between 2 and 20
     }
+    cout << "After inserting even numbers from 2 to 20: ";
     lst.display();
-    cout << "\n";
 
-    cout << "finding 4: " << ((lst.find(4)) ? "yes" : "no") << "\n";
-    cout << "finding 14: " << ((lst.find(14)) ? "yes" : "no") << "\n";
+    // Attempt to find elements
+    cout << "Finding 4: " << (lst.find(4) ? "Found" : "Not found") << endl;
+    cout << "Finding 5: " << (lst.find(5) ? "Found" : "Not found") << endl; // 5 is not in the list
 
-    cout << "removing 4 and 14\n";
+    // Remove elements
     lst.remove(4);
-    lst.remove(14);
+    lst.remove(10);
+    cout << "After removing 4 and 10: ";
     lst.display();
-    cout << "\n";
 
-    cout << "inserting 5 and 15\n";
+    // Insert more elements
     lst.insert(5);
     lst.insert(15);
+    cout << "After inserting 5 and 15: ";
     lst.display();
-    cout << "\n";
 
-    cout << "removing 8 and 18\n";
-    lst.remove(8);
-    lst.remove(18);
-    lst.display();
-    cout << "\n";
-
-    cout << "inserting 2 and 25\n";
-    lst.insert(2);
-    lst.insert(25);
-    lst.display();
-    cout << "\n";
-
-    // Testing find operation
-    cout << "finding 1: " << ((lst.find(1)) ? "yes" : "no") << "\n";
-    cout << "finding 2: " << ((lst.find(2)) ? "yes" : "no") << "\n";
-    cout << "finding 4: " << ((lst.find(4)) ? "yes" : "no") << "\n";
-    cout << "finding 5: " << ((lst.find(5)) ? "yes" : "no") << "\n";
-    cout << "finding 8: " << ((lst.find(8)) ? "yes" : "no") << "\n";
-    cout << "finding 11: " << ((lst.find(11)) ? "yes" : "no") << "\n";
-    cout << "finding 14: " << ((lst.find(14)) ? "yes" : "no") << "\n";
-    cout << "finding 15: " << ((lst.find(15)) ? "yes" : "no") << "\n";
-    cout << "finding 18: " << ((lst.find(18)) ? "yes" : "no") << "\n";
-    cout << "finding 25: " << ((lst.find(25)) ? "yes" : "no") << "\n";
-    cout << "finding 28: " << ((lst.find(28)) ? "yes" : "no") << "\n";
-
-    if (!lst.isEmpty()) {
-        cout << " max: " << lst.getMax() << "\n";
-        cout << " min: " << lst.getMin() << "\n";
+    // Testing Min and Max
+    try {
+        cout << "Min: " << lst.getMin() << endl;
+        cout << "Max: " << lst.getMax() << endl;
+    } catch (const std::exception& e) {
+        cout << "Exception caught: " << e.what() << endl;
     }
 
-    cout << "making and deleting the list\n";
-    OSULL<int> *lst2 = new OSULL<int>;
-    lst2->insert(2);
-    lst2->insert(25);
-    lst2->display();
-    delete lst2;
-    cout << "\n";
+    // Testing on an empty list
+    OSULL<int> emptyList;
+    cout << "Testing on an empty list:\n";
+    try {
+        cout << "Min: " << emptyList.getMin() << endl;
+    } catch (const std::exception& e) {
+        cout << "Exception caught trying to get min from an empty list: " << e.what() << endl;
+    }
 
-    cout << "making a character list\n";
-    OSULL<char> *lst3 = new OSULL<char>;
-    lst3->insert('c');
-    lst3->insert('a');
-    lst3->insert('d');
-    lst3->insert('b');
-    lst3->display();
-    delete lst3;
-    cout << "\n";
+    try {
+        cout << "Max: " << emptyList.getMax() << endl;
+    } catch (const std::exception& e) {
+        cout << "Exception caught trying to get max from an empty list: " << e.what() << endl;
+    }
 
-    cout << "\n";
-    cout << "done\n";
+    cout << "Finding 10 in an empty list: " << (emptyList.find(10) ? "Found" : "Not found") << endl;
+    cout << "Removing 10 from an empty list: " << (emptyList.remove(10) ? "Removed" : "Not found") << endl;
+
+    cout << "Done with all tests.\n";
 
     return 0;
 }

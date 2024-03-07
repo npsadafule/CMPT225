@@ -1,229 +1,208 @@
-/* Ordered Set Implemented in an Unrolled (Doubly)-Linked List */
-// File: OSULL.h
-
 #include <iostream>
-#include <cstring>
+#include <algorithm>
+#include <vector>
 using namespace std;
 
 template <typename T, int initNodeCapacity = 10>
 class OSULL {
-   public:
-      OSULL() {
-         // set the node capacity
-         nodeCapacity = initNodeCapacity;
+public:
+    OSULL() : size(0), nodeCapacity(initNodeCapacity) {
+        // Initialize the dummy front and back nodes with 0 capacity for simplicity
+        front = new Node(nullptr, nullptr, 0);
+        back = new Node(nullptr, nullptr, 0);
+        front->next = back;
+        back->prev = front;
+    }
 
-         // make the front and back dummy nodes
-         front = new Node(nullptr, nullptr, nodeCapacity);
-         back = new Node(front, nullptr, nodeCapacity);
-         front->next = back;
+    ~OSULL() {
+        clear();
+    }
 
-         size = 0;
-         nodeCount = 0; // includes front and back dummy nodes
-      }
+    bool isEmpty() const {
+        return size == 0;
+    }
 
-      ~OSULL() {
-         Node* cursor = front;
-         while (cursor != nullptr) {
-               Node* current = cursor;
-               cursor = cursor->next;
-               delete current;
-         }
-      }
+    int get_size() const {
+        return size;
+    }
 
-      bool isEmpty() { return size == 0; }
-      int get_size() { return size; }
+    bool insert(T item) {
+        Node* current = front->next;
+        while (current != back && (current->data.size() == current->capacity || current->getMax() < item)) {
+            current = current->next;
+        }
 
-      bool insert(T item) {
-         Node* cursor = front->next;
-         while (cursor != back) {
-               if (cursor->size < cursor->capacity || cursor->next == back) {
-                  if (cursor->insert(item)) {
-                     size++;
-                     return true;
-                  } else {
-                     return false; // Item already present
-                  }
-               }
-               cursor = cursor->next;
-         }
-         return false;
-      }
+        if (current == back || !current->insert(item)) {
+            // Need to handle insertion in a new node or split existing node
+            Node* newNode = current == back ? back->prev : current;
+            if (newNode->data.size() == newNode->capacity) {
+                newNode = splitNode(newNode);
+            }
+            newNode->insert(item);
+            size++;
+            return true;
+        }
 
-      bool find(T item) {
-         Node* cursor = front->next;
-         while (cursor != back) {
-               if (cursor->find(item)) {
-                  return true;
-               }
-               cursor = cursor->next;
-         }
-         return false;
-      }
+        size++;
+        return true;
+    }
 
-      bool remove(T item) {
-         Node* cursor = front->next;
-         while (cursor != back) {
-               if (cursor->remove(item)) {
-                  size--;
-                  return true;
-               }
-               cursor = cursor->next;
-         }
-         return false;
-      }
+    bool find(T item) {
+        Node* current = front->next;
+        while (current != back) {
+            if (current->find(item)) {
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
+    }
 
-      T getMin() {
-         // Requires: size not 0
-         if (size <= 0) {
-            cout << "List is empty. No Min element" << endl;
-         }
-         return front->next->getMin();
-      }
+    bool remove(T item) {
+        Node* current = front->next;
+        while (current != back) {
+            if (current->remove(item)) {
+                size--;
+                if (current->data.size() < nodeCapacity / 2) {
+                    balanceOrMerge(current);
+                }
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
+    }
 
-      T getMax() {
-         // Requires: size not 0
-         if (size <= 0) {
-            cout << "List is empty. No Max element" << endl;
-         }
-         return back->prev->getMax();
-      }
+    T getMin() {
+        return front->next->getMin();
+    }
 
-      void display() {
-         Node* cursor = front->next;
-         cout << "<";
-         while (cursor != back) {
-               cursor->display();
-               if (cursor->next != back) {
-                  cout << ", ";
-               }
-               cursor = cursor->next;
-         }
-         cout << ">";
-      }
+    T getMax() {
+        return back->prev->getMax();
+    }
 
-   private:
-      class Node {
-      public:
-         Node(Node* prev, Node* next, int capacity) {
-               this->prev = prev;
-               this->next = next;
-               this->capacity = capacity;
-               data = new T[capacity];
-               size = 0;
-         }
-         ~Node() {
-               delete[] data;
-         }
-         Node* prev;
-         Node* next;
-         int capacity;
-         T* data;
-         int size;
+    void display() {
+        for (Node* current = front->next; current != back; current = current->next) {
+            current->display();
+            if (current->next != back) cout << " -> ";
+        }
+        cout << "\n";
+    }
 
-         bool insert(T item) {
-            Node* cursor = front->next;
-            while (cursor != back) {
-               if (cursor->size < cursor->capacity || item < cursor->getMin()) {
-                  if (cursor->insert(item)) {
-                     size++;
-                     return true;
-                  }
-                  return false; // Item is already present
-               } 
-               else if (cursor->size == cursor->capacity) {
-                  // Handle full node: split node
-                  Node* newNode = new Node(cursor, cursor->next, nodeCapacity);
-                  // Distribute the elements between cursor and newNode
-                  // Move half to the new node
-                  int moveCount = cursor->size / 2;
-                  for (int i = 0; i < moveCount; ++i) {
-                     newNode->data[i] = cursor->data[cursor->size / 2 + i];
-                     newNode->size++;
-                     cursor->size--;
-                  }
-                  if (item > cursor->getMax()) {
-                     newNode->insert(item);
-                  } else {
-                     cursor->insert(item);
-                  }
-                  newNode->next->prev = newNode;
-                  cursor->next = newNode;
-                  size++;
-                  nodeCount++;
-                  return true;
-               }
-               cursor = cursor->next;
+private:
+    int size;
+    int nodeCapacity;
+    struct Node {
+        vector<T> data;
+        Node* prev;
+        Node* next;
+        int capacity;
+
+        Node(Node* prev, Node* next, int capacity) : prev(prev), next(next), capacity(capacity) {
+            data.reserve(capacity);
+        }
+
+        bool insert(T item) {
+            if (std::find(data.begin(), data.end(), item) != data.end()) return false; // Item already exists
+            data.push_back(item);
+            std::sort(data.begin(), data.end());
+            return true;
+        }
+
+        bool find(T item) {
+            return std::find(data.begin(), data.end(), item) != data.end();
+        }
+
+        bool remove(T item) {
+            auto it = std::find(data.begin(), data.end(), item);
+            if (it != data.end()) {
+                data.erase(it);
+                return true;
             }
             return false;
-         }
+        }
 
-         bool find(T item) {
-               for (int i = 0; i < size; i++) {
-                  if (data[i] == item) {
-                     return true;
-                  }
-               }
-               return false;
-         }
+        T getMin() const { return data.front(); }
+        T getMax() const { return data.back(); }
 
-         bool remove(T item) {
-            Node* cursor = front->next;
-            while (cursor != back) {
-               if (cursor->find(item) && cursor->remove(item)) {
-                  size--;
-                  if (cursor->size < nodeCapacity / 2) {
-                     // If the node is less than half full after removal, try to rebalance or merge
-                     if (cursor->prev != front && cursor->prev->size > nodeCapacity / 2) {
-                        // Steal from the previous node
-                        cursor->insert(cursor->prev->data[cursor->prev->size - 1]);
-                        cursor->prev->remove(cursor->prev->data[cursor->prev->size - 1]);
-                     } else if (cursor->next != back && cursor->next->size > nodeCapacity / 2) {
-                        // Steal from the next node
-                        cursor->insert(cursor->next->data[0]);
-                        cursor->next->remove(cursor->next->data[0]);
-                     } else {
-                        // Merge with the next node if possible, or with the previous if next is the back dummy
-                        Node* mergeTarget = cursor->next != back ? cursor : cursor->prev;
-                        for (int i = 0; i < cursor->size; ++i) {
-                              mergeTarget->insert(cursor->data[i]);
-                        }
-                        // Remove the current node
-                        mergeTarget->next = cursor->next;
-                        cursor->next->prev = mergeTarget;
-                        delete cursor;
-                        nodeCount--;
-                     }
-                  }
-                  return true;
-               }
-               cursor = cursor->next;
+        void display() const {
+            for (const T& val : data) {
+                cout << val << (val != data.back() ? ", " : "");
             }
-            return false;
-         }
+        }
+    };
 
-         void display() {
-               for (int i = 0; i < size; i++) {
-                  cout << data[i];
-                  if (i < size - 1) {
-                     cout << ", ";
-                  }
-               }
-         }
+    Node* front;
+    Node* back;
 
-         T getMin() {
-               // Assumes non-empty node
-               return data[0];
-         }
+    Node* splitNode(Node* node) {
+        Node* newNode = new Node(node, node->next, nodeCapacity);
+        int splitIndex = node->data.size() / 2;
+        newNode->data.assign(node->data.begin() + splitIndex, node->data.end());
+        node->data.erase(node->data.begin() + splitIndex, node->data.end());
 
-         T getMax() {
-               // Assumes non-empty node
-               return data[size - 1];
-         }
-      };
+        if (node->next) {
+            node->next->prev = newNode;
+        }
+        node->next = newNode;
+        return newNode;
+    }
 
-      int size; // current number of items
-      int nodeCount; // current number of nodes
-      int nodeCapacity; // capacity to assign to new nodes
-      Node* front; // pointer to front dummy node
-      Node* back;  // pointer to back dummy node
+    void balanceOrMerge(Node* node) {
+    if (!node || node == front || node == back || node->data.empty()) return; // Safety check
+
+    Node* prevNode = node->prev != front ? node->prev : nullptr;
+    Node* nextNode = node->next != back ? node->next : nullptr;
+
+    // Determine whether to balance with the previous or next node based on their fullness
+    if (prevNode && !prevNode->data.empty() && (prevNode->data.size() > nodeCapacity / 2)) {
+        // Borrow from the previous node
+        T borrowedItem = prevNode->data.back();
+        prevNode->data.pop_back();
+        node->data.insert(node->data.begin(), borrowedItem);
+        std::sort(node->data.begin(), node->data.end()); // Ensure data remains sorted
+    } else if (nextNode && !nextNode->data.empty() && (nextNode->data.size() > nodeCapacity / 2)) {
+        // Borrow from the next node
+        T borrowedItem = nextNode->data.front();
+        nextNode->data.erase(nextNode->data.begin());
+        node->data.push_back(borrowedItem);
+        std::sort(node->data.begin(), node->data.end()); // Ensure data remains sorted
+    } else if (prevNode && (node->data.size() + prevNode->data.size() <= nodeCapacity)) {
+        // Merge with the previous node if the total size doesn't exceed capacity
+        mergeNodes(prevNode, node);
+    } else if (nextNode && (node->data.size() + nextNode->data.size() <= nodeCapacity)) {
+        // Merge with the next node if the total size doesn't exceed capacity
+        mergeNodes(node, nextNode);
+    }
+}
+
+void mergeNodes(Node* node1, Node* node2) {
+    // Assumes node1 comes before node2 in the list
+    for (T& item : node2->data) {
+        node1->data.push_back(item);
+    }
+    std::sort(node1->data.begin(), node1->data.end()); // Ensure data remains sorted
+
+    // Update pointers
+    node1->next = node2->next;
+    if (node2->next != nullptr) {
+        node2->next->prev = node1;
+    }
+
+    delete node2; // Free the memory of the merged node
+
+    if (node1->next == back) { // If node1 is now the last real node before the back dummy
+        back->prev = node1;
+    }
+}
+
+
+    void clear() {
+        Node* current = front;
+        while (current != nullptr) {
+            Node* toDelete = current;
+            current = current->next;
+            delete toDelete;
+        }
+    }
 };
