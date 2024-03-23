@@ -1,7 +1,9 @@
-#include "IPQ.h" // Assuming the IPQ implementation is saved in IPQ.h
+#include "IPQ.h" 
 #include <cassert>
 #include <string>
 #include <iostream>
+
+using namespace std;
 
 void testInsertAndGetMin() {
     IPQ<> ipq;
@@ -10,7 +12,7 @@ void testInsertAndGetMin() {
     ipq.insert("task3", 10);
 
     assert(ipq.getMin() == "task3" && "getMin should return the task with lowest priority.");
-    std::cout << "testInsertAndGetMin passed." << std::endl;
+    cout << "testInsertAndGetMin passed." << endl;
 }
 
 void testDeleteMin() {
@@ -19,10 +21,10 @@ void testDeleteMin() {
     ipq.insert("task2", 20);
     ipq.insert("task3", 10);
 
-    std::string minTask = ipq.deleteMin();
+    string minTask = ipq.deleteMin();
     assert(minTask == "task3" && "deleteMin should remove and return the task with lowest priority.");
     assert(ipq.size() == 2 && "Size should be 2 after one deletion.");
-    std::cout << "testDeleteMin passed." << std::endl;
+    cout << "testDeleteMin passed." << endl;
 }
 
 void testUpdatePriority() {
@@ -33,7 +35,7 @@ void testUpdatePriority() {
 
     ipq.updatePriority("task1", 5);
     assert(ipq.getMin() == "task1" && "getMin should return 'task1' after priority update.");
-    std::cout << "testUpdatePriority passed." << std::endl;
+    cout << "testUpdatePriority passed." << endl;
 }
 
 void testRemove() {
@@ -44,7 +46,7 @@ void testRemove() {
 
     ipq.remove("task2");
     assert(ipq.size() == 2 && "Size should be 2 after removing 'task2'.");
-    std::cout << "testRemove passed." << std::endl;
+    cout << "testRemove passed." << endl;
 }
 
 void testIsEmptyAndClear() {
@@ -56,14 +58,13 @@ void testIsEmptyAndClear() {
 
     ipq.clear();
     assert(ipq.isEmpty() == true && "isEmpty should return true after clear.");
-    std::cout << "testIsEmptyAndClear passed." << std::endl;
+    cout << "testIsEmptyAndClear passed." << endl;
 }
 
 void testReserve() {
     IPQ<> ipq;
     ipq.reserve(20);
-    // This test is to ensure no exceptions or errors; direct observable behavior from reserve is hard to assert.
-    std::cout << "testReserve passed." << std::endl;
+    cout << "testReserve passed." << endl;
 }
 
 int main() {
@@ -74,6 +75,6 @@ int main() {
     testIsEmptyAndClear();
     testReserve();
 
-    std::cout << "All tests passed successfully!" << std::endl;
+    cout << "All tests passed successfully!" << endl;
     return 0;
 }

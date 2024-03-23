@@ -1,8 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
-#include <exception>
-#include <algorithm>
 #include <stdexcept>
 
 template<int initialSize = 10>
@@ -17,7 +15,6 @@ public:
         for (const auto& task : tasks) {
             insert(task.first, task.second);
         }
-        // Optionally, could apply a more efficient bulk insert + heapify operation.
     }
 
     void insert(const std::string& tid, int p) {
