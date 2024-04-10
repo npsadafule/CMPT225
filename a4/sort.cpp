@@ -124,14 +124,21 @@ int main() {
     auto finish = std::chrono::high_resolution_clock::now();
 
     // std::sort for comparison
-    arr = original;
+    arr = original; // Copy original data
     start = std::chrono::high_resolution_clock::now();
     std::sort(arr.begin(), arr.end());
     finish = std::chrono::high_resolution_clock::now();
     elapsed = finish - start;
     std::cout << "std::sort time: " << elapsed.count() << " s\n";
 
-    // Quicksort with Lomuto partitioning and last element as pivot
+    // Verify that the array is actually sorted
+    if (std::is_sorted(arr.begin(), arr.end())) {
+        std::cout << "Array is sorted." << std::endl;
+    } else {
+        std::cout << "Array is NOT sorted." << std::endl;
+    }
+
+    // Quicksort with Lomuto and last element pivot
     arr = original;
     start = std::chrono::high_resolution_clock::now();
     quicksortLomuto(arr, 0, arr.size() - 1);
@@ -139,31 +146,52 @@ int main() {
     elapsed = finish - start;
     std::cout << "Quicksort Lomuto with last element as pivot time: " << elapsed.count() << " s\n";
 
-    // Quicksort with Hoare partitioning and first element as pivot
+    // Verify that the array is actually sorted
+    if (std::is_sorted(arr.begin(), arr.end())) {
+        std::cout << "Array is sorted." << std::endl;
+    } else {
+        std::cout << "Array is NOT sorted." << std::endl;
+    }
+
+    // Quicksort with Hoare and first element pivot
     arr = original;
     start = std::chrono::high_resolution_clock::now();
     quicksortHoare(arr, 0, arr.size() - 1);
     finish = std::chrono::high_resolution_clock::now();
     elapsed = finish - start;
     std::cout << "Quicksort Hoare with first element as pivot time: " << elapsed.count() << " s\n";
-    
+
+    // Verify that the array is actually sorted
+    if (std::is_sorted(arr.begin(), arr.end())) {
+        std::cout << "Array is sorted." << std::endl;
+    } else {
+        std::cout << "Array is NOT sorted." << std::endl;
+    }
+
     // Quicksort with Lomuto and median-of-three pivot
-    arr = original; // Reset to original data
+    arr = original;
     start = std::chrono::high_resolution_clock::now();
     quicksortLomutoMedian(arr, 0, arr.size() - 1);
     finish = std::chrono::high_resolution_clock::now();
     elapsed = finish - start;
     std::cout << "Quicksort Lomuto with median-of-three time: " << elapsed.count() << " s\n";
 
+    // Verify that the array is actually sorted
+    if (std::is_sorted(arr.begin(), arr.end())) {
+        std::cout << "Array is sorted." << std::endl;
+    } else {
+        std::cout << "Array is NOT sorted." << std::endl;
+    }
+
     // Quicksort with Hoare and median-of-three pivot
-    arr = original; // Reset to original data
+    arr = original;
     start = std::chrono::high_resolution_clock::now();
     quicksortHoareMedian(arr, 0, arr.size() - 1);
     finish = std::chrono::high_resolution_clock::now();
     elapsed = finish - start;
     std::cout << "Quicksort Hoare with median-of-three time: " << elapsed.count() << " s\n";
 
-    // Optionally, verify that the arrays are actually sorted
+    // Verify that the array is actually sorted
     if (std::is_sorted(arr.begin(), arr.end())) {
         std::cout << "Array is sorted." << std::endl;
     } else {
