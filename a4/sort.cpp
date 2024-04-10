@@ -81,34 +81,94 @@ void quicksortHoareMedian(std::vector<int>& arr, int low, int high) {
     }
 }
 
+// Quicksort with Lomuto partitioning and last element as pivot
+void quicksortLomuto(std::vector<int>& arr, int low, int high) {
+    if (high - low < 10) { // Threshold for small sequences
+        insertionSort(arr, low, high);
+    } else {
+        if (low < high) {
+            int pivot = lomutoPartition(arr, low, high);
+            quicksortLomuto(arr, low, pivot - 1);
+            quicksortLomuto(arr, pivot + 1, high);
+        }
+    }
+}
+
+// Quicksort with Hoare partitioning and first element as pivot
+void quicksortHoare(std::vector<int>& arr, int low, int high) {
+    if (high - low < 10) { // Threshold for small sequences
+        insertionSort(arr, low, high);
+    } else {
+        if (low < high) {
+            int pivot = hoarePartition(arr, low, high);
+            quicksortHoare(arr, low, pivot);
+            quicksortHoare(arr, pivot + 1, high);
+        }
+    }
+}
+
 // Main function to execute the Quicksort variants
 int main() {
-    std::vector<int> arr; // Fill the vector with large input data
-
-    // Prepare a large input data
     std::mt19937 rng(std::random_device{}());
     std::uniform_int_distribution<int> dist(1, 1000000);
-    for (int i = 0; i < 1000000; ++i) {
-        arr.push_back(dist(rng));
+
+    // Generate large input data
+    std::vector<int> original;
+    for (int i = 0; i < 100000000; ++i) {
+        original.push_back(dist(rng));
     }
 
-    std::vector<int> arrCopy = arr; // Make copies for fair comparison
+    std::vector<int> arr;
+    std::chrono::duration<double> elapsed;
+    auto start = std::chrono::high_resolution_clock::now();
+    auto finish = std::chrono::high_resolution_clock::now();
 
     // std::sort for comparison
-    auto start = std::chrono::high_resolution_clock::now();
+    arr = original;
+    start = std::chrono::high_resolution_clock::now();
     std::sort(arr.begin(), arr.end());
-    auto finish = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = finish - start;
+    finish = std::chrono::high_resolution_clock::now();
+    elapsed = finish - start;
     std::cout << "std::sort time: " << elapsed.count() << " s\n";
 
-    // Quicksort with Lomuto and last element pivot
+    // Quicksort with Lomuto partitioning and last element as pivot
+    arr = original;
     start = std::chrono::high_resolution_clock::now();
-    quicksortLomutoMedian(arrCopy, 0, arrCopy.size() - 1); // You can change this call to other variants
+    quicksortLomuto(arr, 0, arr.size() - 1);
+    finish = std::chrono::high_resolution_clock::now();
+    elapsed = finish - start;
+    std::cout << "Quicksort Lomuto with last element as pivot time: " << elapsed.count() << " s\n";
+
+    // Quicksort with Hoare partitioning and first element as pivot
+    arr = original;
+    start = std::chrono::high_resolution_clock::now();
+    quicksortHoare(arr, 0, arr.size() - 1);
+    finish = std::chrono::high_resolution_clock::now();
+    elapsed = finish - start;
+    std::cout << "Quicksort Hoare with first element as pivot time: " << elapsed.count() << " s\n";
+    
+    // Quicksort with Lomuto and median-of-three pivot
+    arr = original; // Reset to original data
+    start = std::chrono::high_resolution_clock::now();
+    quicksortLomutoMedian(arr, 0, arr.size() - 1);
     finish = std::chrono::high_resolution_clock::now();
     elapsed = finish - start;
     std::cout << "Quicksort Lomuto with median-of-three time: " << elapsed.count() << " s\n";
 
-    // Repeat the process for the other variants...
+    // Quicksort with Hoare and median-of-three pivot
+    arr = original; // Reset to original data
+    start = std::chrono::high_resolution_clock::now();
+    quicksortHoareMedian(arr, 0, arr.size() - 1);
+    finish = std::chrono::high_resolution_clock::now();
+    elapsed = finish - start;
+    std::cout << "Quicksort Hoare with median-of-three time: " << elapsed.count() << " s\n";
+
+    // Optionally, verify that the arrays are actually sorted
+    if (std::is_sorted(arr.begin(), arr.end())) {
+        std::cout << "Array is sorted." << std::endl;
+    } else {
+        std::cout << "Array is NOT sorted." << std::endl;
+    }
 
     return 0;
 }
